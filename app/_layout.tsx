@@ -28,7 +28,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="report/location"
           options={{
-            presentation: "modal",
+            presentation: "card",
             title: "Set Location",
             headerShown: true,
           }}
@@ -36,7 +36,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="report/questions"
           options={{
-            presentation: "modal",
+            presentation: "card",
             title: "Report Details",
             headerShown: true,
             headerBackTitle: "Back",
@@ -45,6 +45,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="report/drone-dispatched"
           options={{
+            presentation: "card",
             title: "Drone Dispatched",
             headerShown: false,
             gestureEnabled: false,

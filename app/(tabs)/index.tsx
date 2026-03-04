@@ -25,7 +25,7 @@ export default function HomeScreen() {
           onPress={() => router.push("/report/location")}
         >
           <Image
-            source={require("@/assets/images/reportAccident.png")}
+            source={require("@/assets/images/reportAccident1.png")}
             style={{ width: 140, height: 140, marginBottom: 16 }}
             contentFit="contain"
           />
