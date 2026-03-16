@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import {
   View,
+  Modal,
   TextInput,
+  Pressable,
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
@@ -18,6 +20,8 @@ export default function QuestionsScreen() {
   const [hasInjury, setHasInjury] = useState<boolean | null>(null);
   const [isCarAccident, setIsCarAccident] = useState<boolean | null>(null);
   const [nationalId, setNationalId] = useState("");
+  const [showInjuryPopup, setShowInjuryPopup] = useState(false);
+  const [showCarAccidentPopup, setShowCarAccidentPopup] = useState(false);
 
   const canProceed =
     hasInjury !== null &&
@@ -70,7 +74,10 @@ export default function QuestionsScreen() {
                     ? "border-najm-green bg-green-50"
                     : "border-gray-300 bg-gray-50"
                 }`}
-                onPress={() => setHasInjury(true)}
+                onPress={() => {
+                  setHasInjury(true);
+                  setShowInjuryPopup(true);
+                }}
               >
                 <ThemedText
                   className={`text-base font-semibold ${
@@ -127,7 +134,10 @@ export default function QuestionsScreen() {
                     ? "border-najm-red bg-red-50"
                     : "border-gray-300 bg-gray-50"
                 }`}
-                onPress={() => setIsCarAccident(false)}
+                onPress={() => {
+                  setIsCarAccident(false);
+                  setShowCarAccidentPopup(true);
+                }}
               >
                 <ThemedText
                   className={`text-base font-semibold ${
@@ -167,6 +177,71 @@ export default function QuestionsScreen() {
               Send Report
             </ThemedText>
           </TouchableOpacity>
+
+          {/* Injury Warning Popup */}
+          <Modal
+            visible={showInjuryPopup}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setShowInjuryPopup(false)}
+          >
+            <View className="flex-1 items-center justify-center px-6 bg-black/40">
+              <View className="w-full max-w-sm rounded-2xl bg-white p-6 items-center">
+                <View className="h-16 w-16 rounded-full bg-najm-red items-center justify-center mb-4">
+                  <ThemedText className="text-white text-3xl font-bold">
+                    ✕
+                  </ThemedText>
+                </View>
+                <ThemedText className="text-center text-base text-gray-700 mb-5">
+                  When there is an injury in the accident, you should call
+                  Al-Moroor or an Ambulance
+                </ThemedText>
+                <Pressable
+                  className="bg-najm-dark rounded-xl px-6 py-3"
+                  onPress={() => {
+                    setShowInjuryPopup(false);
+                    setHasInjury(null);
+                  }}
+                >
+                  <ThemedText className="text-white font-semibold">
+                    OK
+                  </ThemedText>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+
+          {/* Car Accident Warning Popup */}
+          <Modal
+            visible={showCarAccidentPopup}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setShowCarAccidentPopup(false)}
+          >
+            <View className="flex-1 items-center justify-center px-6 bg-black/40">
+              <View className="w-full max-w-sm rounded-2xl bg-white p-6 items-center">
+                <View className="h-16 w-16 rounded-full bg-najm-red items-center justify-center mb-4">
+                  <ThemedText className="text-white text-3xl font-bold">
+                    ✕
+                  </ThemedText>
+                </View>
+                <ThemedText className="text-center text-base text-gray-700 mb-5">
+                  you should call Al-Moroor
+                </ThemedText>
+                <Pressable
+                  className="bg-najm-dark rounded-xl px-6 py-3"
+                  onPress={() => {
+                    setShowCarAccidentPopup(false);
+                    setIsCarAccident(null);
+                  }}
+                >
+                  <ThemedText className="text-white font-semibold">
+                    OK
+                  </ThemedText>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
