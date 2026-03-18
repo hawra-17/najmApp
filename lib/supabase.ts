@@ -14,8 +14,10 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export interface IncidentData {
   location: string;
-  severity: "High" | "Moderate" | "Low";
-  status: "Active" | "Resolved" | "Pending";
+  latitude: number | null;
+  longitude: number | null;
+  severity?: "High" | "Moderate" | "Low";
+  status?: "Active" | "Resolved" | "Pending";
   hasInjury: boolean;
   isCarAccident: boolean;
   nationalId: string;
@@ -34,14 +36,6 @@ export const submitIncidentReport = async (
     const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
     const time = now.toTimeString().split(" ")[0]; // HH:MM:SS
 
-    // Determine severity based on injury and incident type
-    let severity: "High" | "Moderate" | "Low" = "Low";
-    if (data.hasInjury) {
-      severity = "High";
-    } else if (data.isCarAccident) {
-      severity = "Moderate";
-    }
-
     const response = await supabase
       .from("incidents")
       .insert([
@@ -49,6 +43,8 @@ export const submitIncidentReport = async (
           date,
           time,
           location: data.location,
+          latitude: data.latitude,
+          longitude: data.longitude,
         },
       ])
       .select();

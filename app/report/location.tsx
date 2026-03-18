@@ -125,7 +125,11 @@ export default function LocationScreen() {
       `${region.latitude.toFixed(5)}, ${region.longitude.toFixed(5)}`;
     router.push({
       pathname: "/report/questions",
-      params: { location: locationStr },
+      params: {
+        location: locationStr,
+        latitude: region.latitude.toString(),
+        longitude: region.longitude.toString(),
+      },
     });
   };
 

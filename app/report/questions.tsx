@@ -16,7 +16,11 @@ import { submitIncidentReport } from "@/lib/supabase";
 
 export default function QuestionsScreen() {
   const router = useRouter();
-  const { location } = useLocalSearchParams<{ location: string }>();
+  const { location, latitude, longitude } = useLocalSearchParams<{
+    location: string;
+    latitude: string;
+    longitude: string;
+  }>();
 
   const [hasInjury, setHasInjury] = useState<boolean | null>(null);
   const [isCarAccident, setIsCarAccident] = useState<boolean | null>(null);
@@ -44,6 +48,8 @@ export default function QuestionsScreen() {
 
     const submitResult = await submitIncidentReport({
       location: location || "Unknown location",
+      latitude: latitude ? parseFloat(latitude) : null,
+      longitude: longitude ? parseFloat(longitude) : null,
       hasInjury,
       isCarAccident,
       nationalId,
