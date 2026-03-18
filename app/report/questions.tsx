@@ -12,6 +12,7 @@ import {
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/themed-text";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { submitIncidentReport } from "@/lib/supabase";
 
 export default function QuestionsScreen() {
   const router = useRouter();
@@ -22,17 +23,41 @@ export default function QuestionsScreen() {
   const [nationalId, setNationalId] = useState("");
   const [showInjuryPopup, setShowInjuryPopup] = useState(false);
   const [showCarAccidentPopup, setShowCarAccidentPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const canProceed =
     hasInjury !== null &&
     isCarAccident !== null &&
     nationalId.trim().length > 0;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!canProceed) {
       alert("Please answer all questions and enter your ID");
       return;
     }
+
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const submitResult = await submitIncidentReport({
+      location: location || "Unknown location",
+      hasInjury,
+      isCarAccident,
+      nationalId,
+    });
+
+    if (!submitResult.data) {
+      setIsSubmitting(false);
+      alert(
+        submitResult.error ||
+          "Could not send report. Please check Supabase setup and try again.",
+      );
+      return;
+    }
+
     router.push({
       pathname: "/report/drone-dispatched",
       params: {
@@ -42,6 +67,8 @@ export default function QuestionsScreen() {
         nationalId,
       },
     });
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -168,13 +195,13 @@ export default function QuestionsScreen() {
           {/* Next Button */}
           <TouchableOpacity
             className={`bg-najm-dark rounded-xl py-4 items-center mt-3 ${
-              !canProceed ? "opacity-50" : ""
+              !canProceed || isSubmitting ? "opacity-50" : ""
             }`}
             onPress={handleNext}
             activeOpacity={0.8}
           >
             <ThemedText className="text-white text-lg font-bold">
-              Send Report
+              {isSubmitting ? "Sending..." : "Send Report"}
             </ThemedText>
           </TouchableOpacity>
 
