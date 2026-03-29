@@ -171,7 +171,10 @@ export default function LocationScreen() {
           ref={mapRef}
           style={{ width: "100%", height: "100%" }}
           region={region}
-          onRegionChangeComplete={setRegion}
+          onRegionChangeComplete={(newRegion) => {
+            setRegion(newRegion);
+            updateFromCoords(newRegion.latitude, newRegion.longitude);
+          }}
           showsUserLocation
           showsMyLocationButton={Platform.OS === "android"}
         >
