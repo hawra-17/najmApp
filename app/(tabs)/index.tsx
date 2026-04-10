@@ -47,16 +47,7 @@ export default function HomeScreen() {
     });
   };
 
-  const updateFromCoords = async (lat: number, lng: number) => {
-    const newRegion: Region = {
-      latitude: lat,
-      longitude: lng,
-      latitudeDelta: 0.005,
-      longitudeDelta: 0.005,
-    };
-    setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 500);
-
+  const updateAddress = async (lat: number, lng: number) => {
     try {
       const geocode = await Location.reverseGeocodeAsync({
         latitude: lat,
@@ -72,6 +63,18 @@ export default function HomeScreen() {
     } catch {
       setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
     }
+  };
+
+  const recenterToCoords = async (lat: number, lng: number) => {
+    const newRegion: Region = {
+      latitude: lat,
+      longitude: lng,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005,
+    };
+    setRegion(newRegion);
+    mapRef.current?.animateToRegion(newRegion, 500);
+    updateAddress(lat, lng);
   };
 
   useEffect(() => {
@@ -97,7 +100,7 @@ export default function HomeScreen() {
       try {
         const loc = await fetchLocation();
         if (loc) {
-          await updateFromCoords(loc.coords.latitude, loc.coords.longitude);
+          await recenterToCoords(loc.coords.latitude, loc.coords.longitude);
         } else {
           setErrorMsg("Could not determine your location. Please try again.");
         }
@@ -140,17 +143,12 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-najm-light">
       <SafeAreaView edges={["top"]} className="bg-white">
-        <View className="flex-row items-center justify-between px-5 py-3">
-          <View className="flex-row items-center">
-            <Image
-              source={require("@/assets/images/najmLogo.png")}
-              style={{ width: 90, height: 40 }}
-              contentFit="contain"
-            />
-          </View>
-          <TouchableOpacity activeOpacity={0.8}>
-            <Ionicons name="person-circle-outline" size={34} color="#0a3d62" />
-          </TouchableOpacity>
+        <View className="flex-row items-center px-5 py-3">
+          <Image
+            source={require("@/assets/images/najmLogo.png")}
+            style={{ width: 125, height: 55 }}
+            contentFit="contain"
+          />
         </View>
       </SafeAreaView>
 
@@ -177,7 +175,7 @@ export default function HomeScreen() {
             region={region}
             onRegionChangeComplete={(newRegion) => {
               setRegion(newRegion);
-              updateFromCoords(newRegion.latitude, newRegion.longitude);
+              updateAddress(newRegion.latitude, newRegion.longitude);
             }}
             showsUserLocation
             showsMyLocationButton={Platform.OS === "android"}
@@ -203,23 +201,23 @@ export default function HomeScreen() {
 
           <View className="flex-row gap-3 mb-4">
             <TouchableOpacity
-              className="flex-1 bg-najm-red rounded-xl py-3.5 flex-row items-center justify-center"
+              className="flex-1 bg-najm-red rounded-xl py-3.5 px-3 flex-row items-center justify-center"
               activeOpacity={0.85}
               onPress={() => handleCall("997")}
             >
               <Ionicons name="medkit" size={18} color="white" />
-              <ThemedText className="text-white text-sm font-bold ml-2">
+              <ThemedText className="text-white text-xs font-bold ml-2">
                 CALL AMBULANCE (997)
               </ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="flex-1 bg-najm-dark rounded-xl py-3.5 flex-row items-center justify-center"
+              className="flex-1 bg-najm-dark rounded-xl py-3.5 px-3 flex-row items-center justify-center"
               activeOpacity={0.85}
               onPress={() => handleCall("999")}
             >
               <Ionicons name="shield" size={18} color="white" />
-              <ThemedText className="text-white text-sm font-bold ml-2">
+              <ThemedText className="text-white text-xs font-bold ml-2">
                 CALL POLICE (999)
               </ThemedText>
             </TouchableOpacity>

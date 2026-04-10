@@ -82,14 +82,17 @@ export default function QuestionsScreen() {
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
             paddingHorizontal: 24,
             paddingTop: 16,
-            paddingBottom: 24,
+            paddingBottom: 120,
           }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <ThemedText className="text-sm text-najm-blue mb-7">
             📍 Location: {location}
@@ -193,8 +196,11 @@ export default function QuestionsScreen() {
               placeholder="National ID / Iqama number"
               placeholderTextColor="#999"
               value={nationalId}
-              onChangeText={setNationalId}
+              onChangeText={(text) =>
+                setNationalId(text.replace(/[^0-9]/g, ""))
+              }
               keyboardType="number-pad"
+              maxLength={15}
             />
           </View>
 
